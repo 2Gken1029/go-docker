@@ -1,0 +1,26 @@
+version: "3"
+services:
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: go_database
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+
+  api:
+    build: ./docker/api
+    tty: true
+    volumes:
+      - ./src:/go/src
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - src/.env
